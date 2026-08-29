@@ -19,6 +19,20 @@ export interface ReferenceProfile {
   readonly summary: string;
 }
 
+export interface EvidenceReferenceInputV2 {
+  readonly slot: ReferenceSlot;
+  readonly mimeType: string;
+  readonly dataBase64: string;
+}
+
+export interface EvidenceInputV2 {
+  readonly productName: string;
+  readonly productDetails: string;
+  readonly category: string;
+  readonly voiceGender: VoiceGender;
+  readonly references: readonly EvidenceReferenceInputV2[];
+}
+
 export type EvidenceSource =
   | 'USER_TEXT'
   | 'IMAGE_TEXT'
