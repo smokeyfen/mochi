@@ -1,0 +1,6 @@
+{
+  "name": "MOCHI PROMPT V2",
+  "description": "Evidence engine and prompt generator for structured video product reviews.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

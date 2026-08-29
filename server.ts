@@ -125,7 +125,7 @@ async function startServer() {
     app.use(vite.middlewares);
   }
 
-  app.listen(port, () => {
+  app.listen(port, '0.0.0.0', () => {
     console.log(`MOCHI PROMPT V2 listening on http://localhost:${port}`);
   });
 }
