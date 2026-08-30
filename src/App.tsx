@@ -6,6 +6,7 @@ import type {
   EvidencePackageV2,
   EvidenceReferenceInputV2,
   ReferenceSlot,
+  ScenePlanSetV2,
   VoiceGender,
 } from './v2/contracts';
 
@@ -65,8 +66,10 @@ export default function App() {
   >({});
   const [pendingFileReads, setPendingFileReads] = useState(0);
   const [evidence, setEvidence] = useState<EvidencePackageV2 | null>(null);
+  const [scenePlan, setScenePlan] = useState<ScenePlanSetV2 | null>(null);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPlanning, setIsPlanning] = useState(false);
 
   const selectedReferences = REFERENCE_SLOTS.flatMap((slot) => {
     const reference = references[slot];
@@ -173,6 +176,7 @@ export default function App() {
 
     setError('');
     setEvidence(null);
+    setScenePlan(null);
     setIsSubmitting(true);
 
     try {
@@ -213,10 +217,56 @@ export default function App() {
     }
   }
 
+
+  async function handlePlanScenes() {
+    if (!evidence || isPlanning) return;
+
+    setError('');
+    setScenePlan(null);
+    setIsPlanning(true);
+
+    try {
+      const response = await fetch('/api/v2/director/plan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ evidence }),
+      });
+
+      const payload: unknown = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          getErrorMessage(payload, `Scene planning failed with HTTP ${response.status}.`),
+        );
+      }
+
+      if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+        throw new Error('Director API returned an invalid response.');
+      }
+
+      const result = payload as { scenePlan?: ScenePlanSetV2 };
+      if (!result.scenePlan) {
+        throw new Error('Director API returned no scene plan.');
+      }
+
+      setScenePlan(result.scenePlan);
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : 'Scene planning failed.',
+      );
+    } finally {
+      setIsPlanning(false);
+    }
+  }
+
   return (
     <main>
-      <h1>MOCHI PROMPT V2 - E1 Test Surface</h1>
-      <p>Temporary surface for validating the V2 evidence engine before E2.</p>
+      <h1>MOCHI PROMPT V2 - E1 / E2 Test Surface</h1>
+      <p>Temporary surface for validating evidence extraction and four-scene direction.</p>
 
       <form onSubmit={handleSubmit}>
         <p>
@@ -309,7 +359,17 @@ export default function App() {
       {evidence ? (
         <section>
           <h2>EvidencePackageV2</h2>
+          <button type="button" onClick={handlePlanScenes} disabled={isPlanning}>
+            {isPlanning ? 'Planning 4 scenes...' : 'Plan 4 scenes'}
+          </button>
           <pre>{JSON.stringify(evidence, null, 2)}</pre>
+        </section>
+      ) : null}
+
+      {scenePlan ? (
+        <section>
+          <h2>ScenePlanSetV2</h2>
+          <pre>{JSON.stringify(scenePlan, null, 2)}</pre>
         </section>
       ) : null}
     </main>
