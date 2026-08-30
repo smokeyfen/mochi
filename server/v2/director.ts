@@ -189,6 +189,7 @@ Choose exactly one major physical action per scene from: ${SCENE_ACTIONS.join(',
 REFERENCE ROUTING
 - primaryReferenceId must be one of the primary fact's supportingReferenceIds or compatibleReferenceIds.
 - When the primary fact has supportingReferenceIds that are visually usable, prefer one of them as primaryReferenceId because it carries direct evidence authority. Use a merely compatible reference as primary only when it is clearly better for the scene and does not create conflicting visual context.
+- The final video is hands-only: no face or full body. When two routed references can support the same scene, prefer a product-only or packaging-only view as primaryReferenceId over a reference whose summary shows a person/model holding the product. A person/context reference may remain supporting context only when it materially helps and does not force that person into the generated scene.
 - supportingReferenceIds are optional and may only use known uploaded references that genuinely help the selected facts.
 - Never compact or renumber IDs.
 - Do not mix incompatible variants. If references have different non-null variantKey values, keep a scene within one variant.
@@ -209,17 +210,18 @@ CUT
 - Never add more than one cut.
 
 DIALOGUE
-- Write one concise Vietnamese off-camera line per scene in a sincere, natural KOC-review voice: conversational, observant, and human rather than catalog copy or an advertising announcer.
+- Write one concise Vietnamese off-camera line per scene in a sincere KOC-review voice: it should sound like a real person looking at or handling the product right now, not reading a listing, catalog, script brief, or TV advertisement.
 - Keep the selected voice gender consistent; do not mention the speaker on screen.
-- The line does not need to repeat evidence word-for-word. Natural paraphrase, everyday phrasing, and mild subjective reactions to visible presentation are welcome.
-- Prefer one natural sentence or two short spoken clauses. Vary sentence openings across scenes so the four lines do not sound templated.
-- It is fine to say things like "nhìn khá...", "điểm mình thích là...", or another low-risk personal reaction to what is visible. Do not fabricate ownership, long-term use, testing history, or a child's personal experience.
+- The line does not need to repeat evidence word-for-word. Natural paraphrase, everyday phrasing, mild subjective reactions, and conversational particles are welcome when they stay truthful.
+- Prefer ordinary spoken Vietnamese over formal product-copy constructions. When a casual equivalent exists, avoid stiff wording such as "sản phẩm được...", "trang bị...", "tác động lực...", "thiết kế phù hợp cho...", or "rất thích hợp...".
+- Immediate first-person wording is allowed when it describes the current visible review action or observation, for example "mình cầm...", "mình nhìn...", or "mình đẩy xe rồi thả tay...". Do not fabricate ownership, long-term use, prior testing, or a child's personal reaction.
+- For a simple physical behavior, describe what the viewer can see in everyday verbs rather than explaining a mechanism. If the grounded idea is "chạy đà", a natural line can describe pushing/releasing and the car continuing to move; do not rename that behavior as a friction motor, spring motor, pull-back motor, or other internal mechanism.
+- Prefer one natural sentence or two short spoken clauses. Vary sentence openings and cadence across the four scenes so they do not sound templated. Use particles such as "nha", "nè", "thì", or "cũng" only when they genuinely improve spoken rhythm, not as a quota.
 - Keep the spoken idea centered on primaryFactId. Use supportingFactIds only when they fit naturally; there is no requirement to verbalize every supporting fact.
 - Do not turn natural reviewer language into a new falsifiable product claim. Stay within the meaning and strength of the selected grounded facts.
 - Never add ungrounded measurable performance such as speed, distance, duration, force, capacity, or stronger safety/compatibility guarantees.
-- Never name or imply a hidden mechanism or operating step unless it is grounded in the selected facts. A generic run-up/momentum behavior does not by itself justify claims such as "push lightly", "runs far", "high speed", spring motor, friction motor, or pull-back motor.
-- Casual adjectives are allowed when they are clearly subjective and visual, but avoid stacking superlatives or writing polished ad slogans.
-- No hard word-count target; keep it comfortably speakable within an approximately 8-second scene.
+- Casual adjectives are allowed when they are clearly subjective and visual, but avoid stacking superlatives or polished ad slogans.
+- No hard word-count target; keep it comfortably speakable within an approximately 8-second scene in one natural breath.
 
 SEQUENCE
 Build a coherent four-scene review arc. A useful default is broad orientation -> useful feature/behavior -> detail/value -> closing presentation, but follow the actual evidence instead of forcing that pattern.

@@ -70,6 +70,7 @@ export default function App() {
   const [scenePlan, setScenePlan] = useState<ScenePlanSetV2 | null>(null);
   const [compiledPrompts, setCompiledPrompts] = useState<CompiledPromptSetV2 | null>(null);
   const [error, setError] = useState('');
+  const [copyStatus, setCopyStatus] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPlanning, setIsPlanning] = useState(false);
   const [isCompiling, setIsCompiling] = useState(false);
@@ -186,6 +187,7 @@ export default function App() {
     };
 
     setError('');
+    setCopyStatus('');
     setEvidence(null);
     setScenePlan(null);
     setCompiledPrompts(null);
@@ -233,6 +235,7 @@ export default function App() {
     if (!evidence || isPlanning) return;
 
     setError('');
+    setCopyStatus('');
     setScenePlan(null);
     setCompiledPrompts(null);
     setIsPlanning(true);
@@ -279,6 +282,7 @@ export default function App() {
     if (!evidence || !scenePlan || isCompiling) return;
 
     setError('');
+    setCopyStatus('');
     setCompiledPrompts(null);
     setIsCompiling(true);
 
@@ -332,6 +336,7 @@ export default function App() {
     };
 
     setError('');
+    setCopyStatus('');
     setEvidence(null);
     setScenePlan(null);
     setCompiledPrompts(null);
@@ -382,10 +387,30 @@ export default function App() {
     }
   }
 
+  async function copyPrompt(text: string, label: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyStatus(label);
+      setError('');
+    } catch {
+      setError('Could not copy the prompt to the clipboard.');
+    }
+  }
+
+  async function handleCopyAllPrompts() {
+    if (!compiledPrompts) return;
+
+    const text = compiledPrompts.scenes
+      .map((scene) => `SCENE ${scene.sceneNumber}\n${scene.finalPrompt}`)
+      .join('\n\n---\n\n');
+
+    await copyPrompt(text, 'Copied all 4 prompts.');
+  }
+
   return (
     <main>
-      <h1>MOCHI PROMPT V2 - End-to-End Test Surface</h1>
-      <p>Run the full E1 to E2 to E3 pipeline or inspect each stage separately.</p>
+      <h1>MOCHI PROMPT V2 - Production Test Surface</h1>
+      <p>Run the full pipeline, then copy the four final prompts for downstream video production.</p>
 
       <form onSubmit={handleSubmit}>
         <p>
@@ -480,28 +505,63 @@ export default function App() {
 
       {evidence ? (
         <section>
-          <h2>EvidencePackageV2</h2>
+          <h2>Evidence</h2>
           <button type="button" onClick={handlePlanScenes} disabled={isPlanning}>
             {isPlanning ? 'Planning 4 scenes...' : 'Plan 4 scenes'}
           </button>
-          <pre>{JSON.stringify(evidence, null, 2)}</pre>
+          <details>
+            <summary>Inspect EvidencePackageV2</summary>
+            <pre>{JSON.stringify(evidence, null, 2)}</pre>
+          </details>
         </section>
       ) : null}
 
       {scenePlan ? (
         <section>
-          <h2>ScenePlanSetV2</h2>
+          <h2>Scene direction</h2>
           <button type="button" onClick={handleCompilePrompts} disabled={isCompiling}>
             {isCompiling ? 'Compiling final prompts...' : 'Compile final prompts'}
           </button>
-          <pre>{JSON.stringify(scenePlan, null, 2)}</pre>
+          <details>
+            <summary>Inspect ScenePlanSetV2</summary>
+            <pre>{JSON.stringify(scenePlan, null, 2)}</pre>
+          </details>
         </section>
       ) : null}
 
       {compiledPrompts ? (
         <section>
-          <h2>CompiledPromptSetV2</h2>
-          <pre>{JSON.stringify(compiledPrompts, null, 2)}</pre>
+          <h2>Final prompts</h2>
+          <button type="button" onClick={handleCopyAllPrompts}>
+            Copy all 4 prompts
+          </button>
+          {copyStatus !== '' ? <p aria-live="polite">{copyStatus}</p> : null}
+
+          {compiledPrompts.scenes.map((scene) => (
+            <article key={scene.sceneNumber}>
+              <h3>Scene {scene.sceneNumber}</h3>
+              <p>
+                {scene.characterCount} characters · primary {scene.primaryReferenceId}
+                {scene.supportingReferenceIds.length > 0
+                  ? ` · supporting ${scene.supportingReferenceIds.join(', ')}`
+                  : ''}
+              </p>
+              <button
+                type="button"
+                onClick={() =>
+                  copyPrompt(scene.finalPrompt, `Copied Scene ${scene.sceneNumber}.`)
+                }
+              >
+                Copy Scene {scene.sceneNumber}
+              </button>
+              <pre>{scene.finalPrompt}</pre>
+            </article>
+          ))}
+
+          <details>
+            <summary>Inspect raw CompiledPromptSetV2</summary>
+            <pre>{JSON.stringify(compiledPrompts, null, 2)}</pre>
+          </details>
         </section>
       ) : null}
     </main>

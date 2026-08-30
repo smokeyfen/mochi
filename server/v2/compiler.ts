@@ -11,45 +11,44 @@ import type {
   VoiceGender,
 } from '../../src/v2/contracts';
 
-const MAX_PROMPT_CHARACTERS = 5_000;
+const MAX_PROMPT_CHARACTERS = 4_000;
 
 const ACTION_DIRECTIONS: Record<SceneAction, string> = {
   PRESENT:
-    'Reviewer hands bring the product clearly into frame and present it steadily. Keep the gesture simple and product-first; presentation itself must not imply proof of an invisible property.',
+    'Hands present the product steadily and keep it dominant in frame. This is staging only, not proof of an invisible claim.',
   MOVE:
-    'Reviewer hands move the whole product once in a controlled, readable way, then settle it. Treat this as staging unless the grounded scene is explicitly a demonstration.',
+    'Hands move the whole product once in a controlled readable way, then settle it. Treat the motion as staging unless this is a grounded demonstration.',
   REORIENT:
-    'Reviewer hands reorient the whole product once for inspection, using one clean turn or repositioning motion and no second major action.',
+    'Hands turn or reposition the whole product once for inspection; no second major action.',
   PRESS_RELEASE:
-    'Reviewer hands perform one simple whole-product actuation consistent with the grounded behavior, then fully release. The product moves only after release. Do not depict, name, or expose any hidden motor, spring, internal mechanism, or extra actuation.',
+    'Perform one simple whole-product manual actuation, fully release, then let the product move afterward. Do not depict or name any hidden motor, spring, or internal mechanism.',
   OPEN:
-    'Reviewer hands open the grounded product or packaging relationship once in a clear, physically plausible motion; do not add a second major action.',
+    'Open the grounded product or packaging relationship once in one clear physically plausible motion.',
   CLOSE:
-    'Reviewer hands close the grounded product or packaging relationship once in a clear, physically plausible motion; do not add a second major action.',
+    'Close the grounded product or packaging relationship once in one clear physically plausible motion.',
   CONNECT:
-    'Reviewer hands connect the grounded parts once in a clear, physically plausible motion; do not invent extra parts, adapters, or mechanisms.',
+    'Connect the grounded parts once; do not invent adapters, parts, or mechanisms.',
   DISCONNECT:
-    'Reviewer hands disconnect the grounded parts once in a clear, physically plausible motion; do not invent extra parts or mechanisms.',
+    'Disconnect the grounded parts once; do not invent extra parts or mechanisms.',
   REMOVE:
-    'Reviewer hands remove the grounded part or item once in a clear, physically plausible motion; do not introduce any additional major action.',
+    'Remove the grounded part or item once; do not add another major action.',
 };
 
 const CAMERA_DIRECTIONS: Record<CameraIntent, string> = {
   OVERVIEW_REVEAL:
-    'Use a slightly elevated medium-wide three-quarter composition that establishes the complete product or set clearly. Keep perspective natural, with a restrained slow push-in or subtle handheld recentering rather than an orbit.',
+    'Slightly elevated medium-wide three-quarter view that clearly establishes the whole product/set; restrained slow push or natural recentering, no orbit.',
   ACTION_READABILITY:
-    'Use a side or three-quarter medium-close composition aligned with the physical action. Keep the hands, product, release point, and immediate motion path unobstructed. Favor a mostly stable camera with only subtle natural recentering.',
+    'Side or three-quarter medium-close view aligned to the action; keep hands, release point, product, and immediate motion path unobstructed; camera mostly stable.',
   DETAIL_INSPECTION:
-    'Use a close three-quarter detail composition that makes the selected visible features easy to inspect. Use only a short, slow lateral drift or gentle micro push; avoid aggressive macro distortion.',
+    'Close three-quarter detail view with natural perspective; only a short slow lateral drift or micro push.',
   PRODUCT_PRESENTATION:
-    'Use a clean product-level or slight three-quarter hero composition. Keep the product dominant in frame with a restrained slow push or pull and small natural handheld imperfections.',
+    'Clean product-level or slight three-quarter hero view; restrained slow push/pull with small natural handheld imperfections.',
 };
 
 const CUT_DIRECTIONS: Record<CutPreference, string> = {
-  CONTINUOUS:
-    'Use one uninterrupted take with no cut. Preserve causal continuity from hand action through the visible result.',
+  CONTINUOUS: 'One uninterrupted take; no cut.',
   ONE_CUT:
-    'At most one purposeful cut is allowed when it materially improves presentation or detail readability; use no cut if the scene reads better continuously. Never split the causal portion of a physical demonstration across a cut.',
+    'Use zero or one purposeful cut only if it improves readability; never split a causal demonstration across the cut.',
 };
 
 function voiceLabel(voiceGender: VoiceGender): string {
@@ -157,48 +156,36 @@ function factContext(scene: ScenePlanV2, evidence: EvidencePackageV2): string {
     return fact ? [fact.text] : [];
   });
 
-  return [
-    `Primary grounded fact: ${primaryFact.text}`,
-    supportingFacts.length > 0
-      ? `Supporting grounded context: ${supportingFacts.join(' | ')}`
-      : 'Supporting grounded context: none.',
-  ].join('\n');
+  return supportingFacts.length > 0
+    ? `Grounded claim: ${primaryFact.text}\nSupporting context: ${supportingFacts.join(' | ')}`
+    : `Grounded claim: ${primaryFact.text}`;
 }
 
 function identityDirection(evidence: EvidencePackageV2): string {
-  const colors = evidence.product.colors.join(', ');
-  const markers = evidence.product.visibleMarkers.join(' | ');
-
   return [
     `Product: ${evidence.product.productName}.`,
-    `Visible identity: ${evidence.product.shapeAndGeometry}`,
-    colors ? `Observed family palette across the evidence: ${colors}. Use only colors actually visible in the routed reference(s); do not combine the whole palette into one variant.` : '',
-    `Material appearance only: ${evidence.product.materialAppearance}`,
-    markers ? `Observed stable markers across the evidence: ${markers}. Apply only markers actually visible on the routed product or packaging; do not force every family marker onto one variant.` : '',
-    `Environment anchor: ${evidence.product.environmentAnchor}.`,
-  ]
-    .filter(Boolean)
-    .join('\n');
+    `Visible form: ${evidence.product.shapeAndGeometry}`,
+    `Surface appearance: ${evidence.product.materialAppearance}`,
+    `Setting: ${evidence.product.environmentAnchor}.`,
+    'Use only colors, markings, packaging details, and variant traits actually visible in the routed reference(s); never merge family variants.',
+  ].join('\n');
 }
 
 function referenceDirection(scene: ScenePlanV2): string {
   const supports = scene.supportingReferenceIds.length
-    ? scene.supportingReferenceIds.join(', ')
-    : 'none';
+    ? `; supporting ${scene.supportingReferenceIds.join(', ')}`
+    : '';
 
   return [
-    `Primary reference: ${scene.primaryReferenceId}.`,
-    `Supporting references: ${supports}.`,
-    'Preserve the exact visible product identity, proportions, colorway, markings, and compatible variant from the routed references. Do not import watermarks, social handles, prices, subtitles, app UI, or unrelated overlay text from the source images. Do not invent extra parts, labels, accessories, packaging features, or mechanisms.',
+    `Primary ${scene.primaryReferenceId}${supports}.`,
+    'Match routed references for visible identity and proportions. Ignore source-image overlays/UI/watermarks. Do not invent parts, labels, accessories, packaging features, or mechanisms.',
   ].join('\n');
 }
 
 function modeDirection(scene: ScenePlanV2): string {
-  if (scene.mode === 'DEMONSTRATION') {
-    return 'This is a truthful physical demonstration. Show only the grounded behavior selected by E2 and make the cause-and-effect easy to read. Do not add a second major action or stronger performance than the grounded fact states.';
-  }
-
-  return 'This is a presentation scene. The physical handling is staging for visual review, not proof of an invisible property, specification, material composition, safety claim, or hidden behavior.';
+  return scene.mode === 'DEMONSTRATION'
+    ? 'Demonstrate only the grounded behavior with clear cause-and-effect; do not strengthen performance or add another major action.'
+    : 'Treat handling as visual presentation only; it must not imply proof of invisible properties, specifications, safety, or hidden behavior.';
 }
 
 function compileScene(
@@ -207,35 +194,29 @@ function compileScene(
 ): CompiledScenePromptV2 {
   const dialogue = JSON.stringify(scene.dialogue);
   const finalPrompt = [
-    'Create an 8-second vertical 9:16 photorealistic KOC-style product-review video. Keep it product-first, sincere and everyday rather than a polished TV commercial, with simple believable physics, one coherent physical world, and no unnecessary cinematic complexity.',
+    'Create one 8-second vertical 9:16 photorealistic KOC product-review scene. Product-first, sincere and everyday, believable physics, no polished TV-commercial feel.',
     '',
-    'PRODUCT IDENTITY',
+    'PRODUCT / REFERENCES',
     identityDirection(evidence),
-    '',
-    'REFERENCE ROUTING',
     referenceDirection(scene),
     '',
-    'SCENE INTENT',
-    `Scene ${scene.sceneNumber}. Mode: ${scene.mode}. Focus: ${scene.focus}.`,
+    'SCENE',
+    `${scene.sceneNumber}. ${scene.mode}. ${scene.focus}.`,
     factContext(scene, evidence),
     modeDirection(scene),
     '',
-    'PHYSICAL ACTION',
-    `Major action: ${scene.action}.`,
-    ACTION_DIRECTIONS[scene.action],
+    'ACTION',
+    `${scene.action}: ${ACTION_DIRECTIONS[scene.action]}`,
     '',
-    'CAMERA',
-    `Camera intent: ${scene.cameraIntent}.`,
-    CAMERA_DIRECTIONS[scene.cameraIntent],
-    '',
-    'EDIT',
+    'CAMERA / EDIT',
+    `${scene.cameraIntent}: ${CAMERA_DIRECTIONS[scene.cameraIntent]}`,
     CUT_DIRECTIONS[scene.cutPreference],
     '',
     'HANDS / AUDIO',
-    'Only the adult reviewer hands may enter the frame; no face or full body. Keep hand motion natural, economical, and secondary to the product.',
-    `Use one off-camera ${voiceLabel(evidence.voiceGender)} Vietnamese speaker. Say exactly once: ${dialogue}`,
-    'Deliver the line like a sincere KOC review: relaxed conversational Vietnamese, natural micro-pauses and human rhythm, not a formal announcer read and not exaggerated advertising delivery.',
-    'Do not add a second speaker, extra spoken claims, on-screen captions, subtitles, or invented promotional text. Natural room tone is allowed; keep the spoken line clear.',
+    'Only adult reviewer hands may enter frame; no face or full body. Keep hand motion natural and secondary to the product.',
+    `One off-camera ${voiceLabel(evidence.voiceGender)} Vietnamese speaker. Say exactly once: ${dialogue}`,
+    'Deliver it like a real KOC speaking while looking at or handling the product now: relaxed conversational Vietnamese, natural micro-pauses, no announcer voice.',
+    'No second speaker, extra spoken claims, captions, subtitles, or invented promotional text. Natural room tone is fine.',
   ].join('\n');
 
   if (finalPrompt.length > MAX_PROMPT_CHARACTERS) {
