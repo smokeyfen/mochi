@@ -194,14 +194,19 @@ ${orderedReferences
 
 EVIDENCE SOURCES
 - USER_TEXT: directly stated in Product details.
-- IMAGE_TEXT: product-relevant text actually legible in a supplied image.
-- VISUAL_EVIDENCE: stable physical or visual facts actually visible in a supplied image.
+- IMAGE_TEXT: product-relevant text, numbers, dimensions, specifications, or labels actually legible in a supplied image.
+- VISUAL_EVIDENCE: stable physical or visual facts actually visible in the depicted product itself, excluding facts learned by reading printed text or numeric annotations.
 - REASONABLE_INFERENCE: a low-risk implication of grounded evidence. It must include a concise inferenceBasis.
 
 GROUNDING RULES
 - Never invent functionality, specifications, material composition, safety, performance, compatibility, included parts, or hidden behavior.
+- Preserve claim strength and mechanism specificity. Keep broad functional claims broad unless USER_TEXT or IMAGE_TEXT explicitly names the mechanism.
+- Example: a user claim equivalent to "can run after manual actuation" or "có thể chạy đà" must not become "pull-back motor", "spring motor", "inertial motor", or another internal mechanism unless that mechanism is explicitly evidenced.
+- Do not add promotional purpose or performance wording such as "designed for active play", "powerful", "fast", "premium", or stronger certainty unless the evidence explicitly supports it.
 - Preserve claim strength. Do not turn "safe" into "absolutely safe", "moves" into "very fast", or any source claim into a stronger certainty/performance claim.
 - Material appearance is not material composition. Visual appearance alone does not prove ABS, silicone, metal, food safety, child safety, durability, or similar invisible properties.
+- Measurements, dimensions, specifications, counts, or feature statements obtained by reading printed text/numbers in an image must include IMAGE_TEXT. Do not classify such information as VISUAL_EVIDENCE merely because the text is visible in the image.
+- VISUAL_EVIDENCE may accompany IMAGE_TEXT only when the depicted object itself independently supports an additional visual part of the same merged fact.
 - Ignore watermarks, usernames, social handles, app UI, prices, timestamps, subtitles, and unrelated overlay text.
 - If explicit evidence materially conflicts, omit the disputed claim from facts instead of choosing a side.
 - Merge semantic duplicates. Do not create extra facts just to reach a target count.
@@ -218,6 +223,9 @@ REFERENCE RULES
 
 FACT MODE
 - DEMONSTRATABLE only when one simple physical action can visibly and truthfully demonstrate the fact using at least one uploaded compatible reference, without inventing hidden mechanics or requiring a second major action.
+- USER_TEXT can establish that a physical behavior is true. The compatible reference only needs to show the correct product/variant clearly enough for that one simple behavior to be performed; a still image does not need to visually prove the motion in advance.
+- Therefore, a grounded simple behavior such as rolling, moving after a simple manual actuation, opening, closing, connecting, disconnecting, or removing should be DEMONSTRATABLE when an uploaded compatible reference makes that action physically plausible without inventing a mechanism.
+- Do not name or infer an internal mechanism merely to justify DEMONSTRATABLE mode. Mode describes whether the fact can be shown, not why the product works.
 - PRESENTATIONAL for appearance, design, packaging, gifting context, counts, specifications, material/safety claims, or other facts that are better reviewed while simply showing the product.
 - A physical presentation is not proof of an invisible property.
 - If a fact has no uploaded reference suitable for a truthful physical demonstration, use PRESENTATIONAL.
