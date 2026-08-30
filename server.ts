@@ -1,10 +1,15 @@
 import express from 'express';
 import path from 'node:path';
 
-import type { EvidenceInputV2, EvidencePackageV2 } from './src/v2/contracts';
+import type {
+  EvidenceInputV2,
+  EvidencePackageV2,
+  ScenePlanSetV2,
+} from './src/v2/contracts';
 import { validateEvidenceInputV2 } from './src/v2/evidence';
 import { analyzeEvidenceV2 } from './server/v2/evidence';
 import { planScenesV2 } from './server/v2/director';
+import { compilePromptsV2 } from './server/v2/compiler';
 
 const app = express();
 const port = Number(process.env.PORT) || 3000;
@@ -44,7 +49,6 @@ function isEvidenceInputBody(value: unknown): value is EvidenceInputV2 {
     );
   });
 }
-
 
 function isEvidencePackageBody(value: unknown): value is EvidencePackageV2 {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -103,6 +107,43 @@ function isEvidencePackageBody(value: unknown): value is EvidencePackageV2 {
   });
 
   return referencesValid && factsValid;
+}
+
+function isScenePlanSetBody(value: unknown): value is ScenePlanSetV2 {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return false;
+  }
+
+  const scenePlan = value as Record<string, unknown>;
+  if (
+    scenePlan.contractVersion !== 1 ||
+    typeof scenePlan.sourceFingerprint !== 'string' ||
+    (scenePlan.voiceGender !== 'FEMALE' && scenePlan.voiceGender !== 'MALE') ||
+    !Array.isArray(scenePlan.scenes) ||
+    scenePlan.scenes.length !== 4
+  ) {
+    return false;
+  }
+
+  return scenePlan.scenes.every((item, index) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) return false;
+    const scene = item as Record<string, unknown>;
+    return (
+      scene.sceneNumber === index + 1 &&
+      (scene.mode === 'PRESENTATION' || scene.mode === 'DEMONSTRATION') &&
+      typeof scene.focus === 'string' &&
+      typeof scene.primaryFactId === 'string' &&
+      Array.isArray(scene.supportingFactIds) &&
+      scene.supportingFactIds.every((id) => typeof id === 'string') &&
+      typeof scene.primaryReferenceId === 'string' &&
+      Array.isArray(scene.supportingReferenceIds) &&
+      scene.supportingReferenceIds.every((id) => typeof id === 'string') &&
+      typeof scene.action === 'string' &&
+      typeof scene.dialogue === 'string' &&
+      typeof scene.cameraIntent === 'string' &&
+      typeof scene.cutPreference === 'string'
+    );
+  });
 }
 
 app.use(express.json({ limit: '50mb' }));
@@ -168,7 +209,6 @@ app.post('/api/v2/evidence/analyze', async (request, response) => {
   }
 });
 
-
 app.post('/api/v2/director/plan', async (request, response) => {
   const apiKey = process.env.GEMINI_API_KEY?.trim();
 
@@ -223,6 +263,35 @@ app.post('/api/v2/director/plan', async (request, response) => {
   }
 });
 
+app.post('/api/v2/compiler/compile', (request, response) => {
+  const body = request.body as Record<string, unknown> | null;
+  const evidence = body && typeof body === 'object' ? body.evidence : undefined;
+  const scenePlan = body && typeof body === 'object' ? body.scenePlan : undefined;
+
+  if (!isEvidencePackageBody(evidence) || !isScenePlanSetBody(scenePlan)) {
+    response.status(400).json({
+      code: 'COMPILER_INPUT_INVALID',
+      message: 'Evidence package or scene plan is invalid.',
+    });
+    return;
+  }
+
+  try {
+    const compiledPrompts = compilePromptsV2(evidence, scenePlan);
+    response.json({ compiledPrompts });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown prompt compilation failure.';
+
+    response.status(message.includes('source fingerprint mismatch') ? 409 : 400).json({
+      code: message.includes('source fingerprint mismatch')
+        ? 'COMPILER_STALE_INPUT'
+        : 'COMPILER_FAILED',
+      message,
+    });
+  }
+});
+
 async function startServer() {
   if (process.env.NODE_ENV === 'production') {
     const distPath = path.resolve(process.cwd(), 'dist');
@@ -241,7 +310,7 @@ async function startServer() {
     app.use(vite.middlewares);
   }
 
-  app.listen(port, () => {
+  app.listen(port, '0.0.0.0', () => {
     console.log(`MOCHI PROMPT V2 listening on http://localhost:${port}`);
   });
 }

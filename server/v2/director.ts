@@ -208,9 +208,11 @@ CUT
 DIALOGUE
 - Write one concise, natural Vietnamese off-camera review line per scene.
 - Keep the selected voice gender consistent; do not mention the speaker on screen.
-- Dialogue must stay within the meaning and strength of primaryFactId plus supportingFactIds.
-- Do not add new mechanisms, specifications, safety guarantees, performance claims, or promotional superlatives.
-- Prefer conversational review wording over literal translation of English evidence text.
+- Dialogue may use natural low-risk reviewer phrasing and ordinary descriptive language; it does not need to repeat evidence word-for-word.
+- Do not turn natural phrasing into a new falsifiable product claim. Stay within the meaning and strength of primaryFactId plus supportingFactIds.
+- Never add ungrounded measurable performance such as speed, distance, duration, force, capacity, or stronger safety/compatibility guarantees.
+- Never name or imply a hidden mechanism or operating step unless it is grounded in the selected facts. For example, a generic run-up/momentum behavior does not by itself justify claims such as "push lightly", "runs far", "high speed", spring motor, or pull-back motor.
+- Prefer conversational review wording over literal translation of English evidence text. Mild subjective framing is fine when it does not become a technical, safety, or performance claim.
 - No hard word-count target; keep it short enough for an approximately 8-second scene.
 
 SEQUENCE

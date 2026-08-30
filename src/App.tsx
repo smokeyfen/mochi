@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
 
 import type {
+  CompiledPromptSetV2,
   EvidenceInputV2,
   EvidencePackageV2,
   EvidenceReferenceInputV2,
@@ -67,9 +68,11 @@ export default function App() {
   const [pendingFileReads, setPendingFileReads] = useState(0);
   const [evidence, setEvidence] = useState<EvidencePackageV2 | null>(null);
   const [scenePlan, setScenePlan] = useState<ScenePlanSetV2 | null>(null);
+  const [compiledPrompts, setCompiledPrompts] = useState<CompiledPromptSetV2 | null>(null);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPlanning, setIsPlanning] = useState(false);
+  const [isCompiling, setIsCompiling] = useState(false);
 
   const selectedReferences = REFERENCE_SLOTS.flatMap((slot) => {
     const reference = references[slot];
@@ -177,6 +180,7 @@ export default function App() {
     setError('');
     setEvidence(null);
     setScenePlan(null);
+    setCompiledPrompts(null);
     setIsSubmitting(true);
 
     try {
@@ -217,12 +221,12 @@ export default function App() {
     }
   }
 
-
   async function handlePlanScenes() {
     if (!evidence || isPlanning) return;
 
     setError('');
     setScenePlan(null);
+    setCompiledPrompts(null);
     setIsPlanning(true);
 
     try {
@@ -263,10 +267,55 @@ export default function App() {
     }
   }
 
+  async function handleCompilePrompts() {
+    if (!evidence || !scenePlan || isCompiling) return;
+
+    setError('');
+    setCompiledPrompts(null);
+    setIsCompiling(true);
+
+    try {
+      const response = await fetch('/api/v2/compiler/compile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ evidence, scenePlan }),
+      });
+
+      const payload: unknown = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          getErrorMessage(payload, `Prompt compilation failed with HTTP ${response.status}.`),
+        );
+      }
+
+      if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+        throw new Error('Compiler API returned an invalid response.');
+      }
+
+      const result = payload as { compiledPrompts?: CompiledPromptSetV2 };
+      if (!result.compiledPrompts) {
+        throw new Error('Compiler API returned no compiled prompts.');
+      }
+
+      setCompiledPrompts(result.compiledPrompts);
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : 'Prompt compilation failed.',
+      );
+    } finally {
+      setIsCompiling(false);
+    }
+  }
+
   return (
     <main>
-      <h1>MOCHI PROMPT V2 - E1 / E2 Test Surface</h1>
-      <p>Temporary surface for validating evidence extraction and four-scene direction.</p>
+      <h1>MOCHI PROMPT V2 - E1 / E2 / E3 Test Surface</h1>
+      <p>Temporary surface for validating evidence, four-scene direction, and final prompt compilation.</p>
 
       <form onSubmit={handleSubmit}>
         <p>
@@ -369,7 +418,17 @@ export default function App() {
       {scenePlan ? (
         <section>
           <h2>ScenePlanSetV2</h2>
+          <button type="button" onClick={handleCompilePrompts} disabled={isCompiling}>
+            {isCompiling ? 'Compiling final prompts...' : 'Compile final prompts'}
+          </button>
           <pre>{JSON.stringify(scenePlan, null, 2)}</pre>
+        </section>
+      ) : null}
+
+      {compiledPrompts ? (
+        <section>
+          <h2>CompiledPromptSetV2</h2>
+          <pre>{JSON.stringify(compiledPrompts, null, 2)}</pre>
         </section>
       ) : null}
     </main>
