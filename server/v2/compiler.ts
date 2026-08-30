@@ -49,7 +49,7 @@ const CUT_DIRECTIONS: Record<CutPreference, string> = {
   CONTINUOUS:
     'Use one uninterrupted take with no cut. Preserve causal continuity from hand action through the visible result.',
   ONE_CUT:
-    'Use exactly one purposeful cut only if it improves presentation or detail readability. Never split the causal portion of a physical demonstration across the cut.',
+    'At most one purposeful cut is allowed when it materially improves presentation or detail readability; use no cut if the scene reads better continuously. Never split the causal portion of a physical demonstration across a cut.',
 };
 
 function voiceLabel(voiceGender: VoiceGender): string {
@@ -172,9 +172,9 @@ function identityDirection(evidence: EvidencePackageV2): string {
   return [
     `Product: ${evidence.product.productName}.`,
     `Visible identity: ${evidence.product.shapeAndGeometry}`,
-    colors ? `Visible colors: ${colors}.` : '',
+    colors ? `Observed family palette across the evidence: ${colors}. Use only colors actually visible in the routed reference(s); do not combine the whole palette into one variant.` : '',
     `Material appearance only: ${evidence.product.materialAppearance}`,
-    markers ? `Visible markers: ${markers}.` : '',
+    markers ? `Observed stable markers across the evidence: ${markers}. Apply only markers actually visible on the routed product or packaging; do not force every family marker onto one variant.` : '',
     `Environment anchor: ${evidence.product.environmentAnchor}.`,
   ]
     .filter(Boolean)
@@ -207,7 +207,7 @@ function compileScene(
 ): CompiledScenePromptV2 {
   const dialogue = JSON.stringify(scene.dialogue);
   const finalPrompt = [
-    'Create an 8-second vertical 9:16 photorealistic product-review video. Product-first composition, simple believable physics, one coherent physical world, and no unnecessary cinematic complexity.',
+    'Create an 8-second vertical 9:16 photorealistic KOC-style product-review video. Keep it product-first, sincere and everyday rather than a polished TV commercial, with simple believable physics, one coherent physical world, and no unnecessary cinematic complexity.',
     '',
     'PRODUCT IDENTITY',
     identityDirection(evidence),
@@ -234,6 +234,7 @@ function compileScene(
     'HANDS / AUDIO',
     'Only the adult reviewer hands may enter the frame; no face or full body. Keep hand motion natural, economical, and secondary to the product.',
     `Use one off-camera ${voiceLabel(evidence.voiceGender)} Vietnamese speaker. Say exactly once: ${dialogue}`,
+    'Deliver the line like a sincere KOC review: relaxed conversational Vietnamese, natural micro-pauses and human rhythm, not a formal announcer read and not exaggerated advertising delivery.',
     'Do not add a second speaker, extra spoken claims, on-screen captions, subtitles, or invented promotional text. Natural room tone is allowed; keep the spoken line clear.',
   ].join('\n');
 

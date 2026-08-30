@@ -73,20 +73,28 @@ export default function App() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isPlanning, setIsPlanning] = useState(false);
   const [isCompiling, setIsCompiling] = useState(false);
+  const [isRunningPipeline, setIsRunningPipeline] = useState(false);
 
   const selectedReferences = REFERENCE_SLOTS.flatMap((slot) => {
     const reference = references[slot];
     return reference ? [reference] : [];
   });
 
-  const canSubmit =
+  const inputReady =
     productName.trim() !== '' &&
     productDetails.trim() !== '' &&
     category.trim() !== '' &&
     voiceGender !== '' &&
     selectedReferences.length >= 1 &&
-    pendingFileReads === 0 &&
-    !isSubmitting;
+    pendingFileReads === 0;
+
+  const canSubmit = inputReady && !isSubmitting && !isRunningPipeline;
+  const canRunPipeline =
+    inputReady &&
+    !isSubmitting &&
+    !isPlanning &&
+    !isCompiling &&
+    !isRunningPipeline;
 
   function handleProductNameChange(event: ChangeEvent<HTMLInputElement>) {
     setProductName(event.currentTarget.value);
@@ -312,10 +320,72 @@ export default function App() {
     }
   }
 
+  async function handleRunPipeline() {
+    if (!canRunPipeline) return;
+
+    const input: EvidenceInputV2 = {
+      productName,
+      productDetails,
+      category,
+      voiceGender,
+      references: selectedReferences,
+    };
+
+    setError('');
+    setEvidence(null);
+    setScenePlan(null);
+    setCompiledPrompts(null);
+    setIsRunningPipeline(true);
+
+    try {
+      const response = await fetch('/api/v2/pipeline/run', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(input),
+      });
+
+      const payload: unknown = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          getErrorMessage(payload, `Pipeline failed with HTTP ${response.status}.`),
+        );
+      }
+
+      if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+        throw new Error('Pipeline API returned an invalid response.');
+      }
+
+      const result = payload as {
+        evidence?: EvidencePackageV2;
+        scenePlan?: ScenePlanSetV2;
+        compiledPrompts?: CompiledPromptSetV2;
+      };
+
+      if (!result.evidence || !result.scenePlan || !result.compiledPrompts) {
+        throw new Error('Pipeline API returned an incomplete result.');
+      }
+
+      setEvidence(result.evidence);
+      setScenePlan(result.scenePlan);
+      setCompiledPrompts(result.compiledPrompts);
+    } catch (requestError) {
+      setError(
+        requestError instanceof Error
+          ? requestError.message
+          : 'Pipeline failed.',
+      );
+    } finally {
+      setIsRunningPipeline(false);
+    }
+  }
+
   return (
     <main>
-      <h1>MOCHI PROMPT V2 - E1 / E2 / E3 Test Surface</h1>
-      <p>Temporary surface for validating evidence, four-scene direction, and final prompt compilation.</p>
+      <h1>MOCHI PROMPT V2 - End-to-End Test Surface</h1>
+      <p>Run the full E1 to E2 to E3 pipeline or inspect each stage separately.</p>
 
       <form onSubmit={handleSubmit}>
         <p>
@@ -395,6 +465,9 @@ export default function App() {
 
         <button type="submit" disabled={!canSubmit}>
           {isSubmitting ? 'Analyzing evidence...' : 'Analyze evidence'}
+        </button>{' '}
+        <button type="button" onClick={handleRunPipeline} disabled={!canRunPipeline}>
+          {isRunningPipeline ? 'Running full pipeline...' : 'Run full pipeline'}
         </button>
       </form>
 

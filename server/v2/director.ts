@@ -137,8 +137,8 @@ function describeFacts(facts: readonly ProductFact[]): string {
   return facts
     .map(
       (fact) =>
-        `${fact.factId} | mode=${fact.mode} | confidence=${fact.confidence} | ${fact.text}\n` +
-        `  supportingRefs=[${fact.supportingReferenceIds.join(', ')}] compatibleRefs=[${fact.compatibleReferenceIds.join(', ')}]`,
+        `${fact.factId} | mode=${fact.mode} | confidence=${fact.confidence} | sources=[${fact.sources.join(', ')}] | ${fact.text}\n` +
+        `  inferenceBasis=${fact.inferenceBasis ?? 'none'} supportingRefs=[${fact.supportingReferenceIds.join(', ')}] compatibleRefs=[${fact.compatibleReferenceIds.join(', ')}]`,
     )
     .join('\n');
 }
@@ -167,6 +167,8 @@ SCENE SELECTION
 - Prefer strong, useful facts over filling a quota. Reusing one strong fact in more than one scene is allowed when the presentation purpose is genuinely different.
 - Do not manufacture weak facts merely to make four scenes distinct.
 - primaryFactId is the main claim for that scene. supportingFactIds may be empty and must only add grounded context from the listed facts.
+- Keep focus semantically anchored to primaryFactId. It may summarize the idea naturally, but it must not introduce a new mechanism, feature, operating step, or performance claim.
+- The dialogue must clearly center on primaryFactId. Supporting facts are optional in speech; omit them when adding them would make the line crowded or unnatural.
 - Do not use LOW-confidence facts as the primary fact when a stronger grounded alternative exists.
 
 PRESENTATION VS DEMONSTRATION
@@ -186,6 +188,7 @@ Choose exactly one major physical action per scene from: ${SCENE_ACTIONS.join(',
 
 REFERENCE ROUTING
 - primaryReferenceId must be one of the primary fact's supportingReferenceIds or compatibleReferenceIds.
+- When the primary fact has supportingReferenceIds that are visually usable, prefer one of them as primaryReferenceId because it carries direct evidence authority. Use a merely compatible reference as primary only when it is clearly better for the scene and does not create conflicting visual context.
 - supportingReferenceIds are optional and may only use known uploaded references that genuinely help the selected facts.
 - Never compact or renumber IDs.
 - Do not mix incompatible variants. If references have different non-null variantKey values, keep a scene within one variant.
@@ -206,14 +209,17 @@ CUT
 - Never add more than one cut.
 
 DIALOGUE
-- Write one concise, natural Vietnamese off-camera review line per scene.
+- Write one concise Vietnamese off-camera line per scene in a sincere, natural KOC-review voice: conversational, observant, and human rather than catalog copy or an advertising announcer.
 - Keep the selected voice gender consistent; do not mention the speaker on screen.
-- Dialogue may use natural low-risk reviewer phrasing and ordinary descriptive language; it does not need to repeat evidence word-for-word.
-- Do not turn natural phrasing into a new falsifiable product claim. Stay within the meaning and strength of primaryFactId plus supportingFactIds.
+- The line does not need to repeat evidence word-for-word. Natural paraphrase, everyday phrasing, and mild subjective reactions to visible presentation are welcome.
+- Prefer one natural sentence or two short spoken clauses. Vary sentence openings across scenes so the four lines do not sound templated.
+- It is fine to say things like "nhìn khá...", "điểm mình thích là...", or another low-risk personal reaction to what is visible. Do not fabricate ownership, long-term use, testing history, or a child's personal experience.
+- Keep the spoken idea centered on primaryFactId. Use supportingFactIds only when they fit naturally; there is no requirement to verbalize every supporting fact.
+- Do not turn natural reviewer language into a new falsifiable product claim. Stay within the meaning and strength of the selected grounded facts.
 - Never add ungrounded measurable performance such as speed, distance, duration, force, capacity, or stronger safety/compatibility guarantees.
-- Never name or imply a hidden mechanism or operating step unless it is grounded in the selected facts. For example, a generic run-up/momentum behavior does not by itself justify claims such as "push lightly", "runs far", "high speed", spring motor, or pull-back motor.
-- Prefer conversational review wording over literal translation of English evidence text. Mild subjective framing is fine when it does not become a technical, safety, or performance claim.
-- No hard word-count target; keep it short enough for an approximately 8-second scene.
+- Never name or imply a hidden mechanism or operating step unless it is grounded in the selected facts. A generic run-up/momentum behavior does not by itself justify claims such as "push lightly", "runs far", "high speed", spring motor, friction motor, or pull-back motor.
+- Casual adjectives are allowed when they are clearly subjective and visual, but avoid stacking superlatives or writing polished ad slogans.
+- No hard word-count target; keep it comfortably speakable within an approximately 8-second scene.
 
 SEQUENCE
 Build a coherent four-scene review arc. A useful default is broad orientation -> useful feature/behavior -> detail/value -> closing presentation, but follow the actual evidence instead of forcing that pattern.

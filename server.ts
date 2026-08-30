@@ -263,6 +263,70 @@ app.post('/api/v2/director/plan', async (request, response) => {
   }
 });
 
+app.post('/api/v2/pipeline/run', async (request, response) => {
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
+
+  if (!apiKey) {
+    response.status(503).json({
+      code: 'GEMINI_API_KEY_MISSING',
+      message: 'GEMINI_API_KEY is not configured on the server.',
+    });
+    return;
+  }
+
+  if (!isEvidenceInputBody(request.body)) {
+    response.status(400).json({
+      code: 'PIPELINE_INPUT_INVALID',
+      message: 'Evidence input shape is invalid.',
+    });
+    return;
+  }
+
+  const issues = validateEvidenceInputV2(request.body);
+  if (issues.length > 0) {
+    response.status(400).json({
+      code: 'PIPELINE_INPUT_INVALID',
+      message: 'Evidence input is invalid.',
+      issues,
+    });
+    return;
+  }
+
+  try {
+    const evidence = await analyzeEvidenceV2(apiKey, request.body);
+    const scenePlan = await planScenesV2(apiKey, evidence);
+    const compiledPrompts = compilePromptsV2(evidence, scenePlan);
+
+    response.json({ evidence, scenePlan, compiledPrompts });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : 'Unknown V2 pipeline failure.';
+
+    if (error instanceof Error && error.name === 'AbortError') {
+      response.status(504).json({
+        code: 'PIPELINE_TIMEOUT',
+        message: 'MOCHI V2 pipeline timed out.',
+      });
+      return;
+    }
+
+    const statusMatch = /^Gemini API (\d{3}):/.exec(message);
+    if (statusMatch?.[1] === '429') {
+      response.status(429).json({
+        code: 'GEMINI_RATE_LIMITED',
+        message,
+      });
+      return;
+    }
+
+    console.error('[MOCHI V2 PIPELINE]', message);
+    response.status(502).json({
+      code: 'PIPELINE_FAILED',
+      message,
+    });
+  }
+});
+
 app.post('/api/v2/compiler/compile', (request, response) => {
   const body = request.body as Record<string, unknown> | null;
   const evidence = body && typeof body === 'object' ? body.evidence : undefined;

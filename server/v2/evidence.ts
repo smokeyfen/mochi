@@ -233,6 +233,7 @@ FACT MODE
 PRODUCT PROFILE
 - summary: concise neutral product summary grounded in the evidence.
 - shapeAndGeometry, colors, materialAppearance, visibleMarkers: stable visible identity only.
+- visibleMarkers must describe markings physically belonging to the product or its actual retail packaging. Exclude measurement arrows, dimension callouts, promotional captions, layout text, or other annotations added by the source image.
 - environmentAnchor: one simple neutral review setting that fits visible product scale/use (for example tabletop, floor, or handheld review). Do not turn it into a product claim and do not add camera language.
 
 INFERENCE
