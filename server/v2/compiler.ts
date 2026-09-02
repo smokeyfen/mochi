@@ -231,6 +231,13 @@ function compileScene(
     characterCount: finalPrompt.length,
     primaryReferenceId: scene.primaryReferenceId,
     supportingReferenceIds: [...scene.supportingReferenceIds],
+    inspectionMetadata: {
+      productName: evidence.product.productName,
+      sceneMode: scene.mode,
+      action: scene.action,
+      dialogue: scene.dialogue,
+      cameraIntent: scene.cameraIntent,
+    },
   };
 }
 

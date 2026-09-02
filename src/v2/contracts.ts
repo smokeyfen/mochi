@@ -137,6 +137,13 @@ export interface CompiledScenePromptV2 {
   readonly characterCount: number;
   readonly primaryReferenceId: string;
   readonly supportingReferenceIds: readonly string[];
+  readonly inspectionMetadata: {
+    readonly productName: string;
+    readonly sceneMode: SceneMode;
+    readonly action: SceneAction;
+    readonly dialogue: string;
+    readonly cameraIntent: CameraIntent;
+  };
 }
 
 export interface CompiledPromptSetV2 {
