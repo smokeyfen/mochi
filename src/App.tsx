@@ -65,6 +65,9 @@ export default function App() {
   const [references, setReferences] = useState<
     Partial<Record<ReferenceSlot, EvidenceReferenceInputV2>>
   >({});
+  const [referenceFileNames, setReferenceFileNames] = useState<
+    Partial<Record<ReferenceSlot, string>>
+  >({});
   const [pendingFileReads, setPendingFileReads] = useState(0);
   const [evidence, setEvidence] = useState<EvidencePackageV2 | null>(null);
   const [scenePlan, setScenePlan] = useState<ScenePlanSetV2 | null>(null);
@@ -130,12 +133,22 @@ export default function App() {
         delete next[slot];
         return next;
       });
+      setReferenceFileNames((current) => {
+        const next = { ...current };
+        delete next[slot];
+        return next;
+      });
       return;
     }
 
     if (!file.type.startsWith('image/')) {
       inputElement.value = '';
       setReferences((current) => {
+        const next = { ...current };
+        delete next[slot];
+        return next;
+      });
+      setReferenceFileNames((current) => {
         const next = { ...current };
         delete next[slot];
         return next;
@@ -157,9 +170,18 @@ export default function App() {
           dataBase64,
         },
       }));
+      setReferenceFileNames((current) => ({
+        ...current,
+        [slot]: file.name,
+      }));
     } catch (readError) {
       inputElement.value = '';
       setReferences((current) => {
+        const next = { ...current };
+        delete next[slot];
+        return next;
+      });
+      setReferenceFileNames((current) => {
         const next = { ...current };
         delete next[slot];
         return next;
@@ -208,6 +230,13 @@ export default function App() {
         const next = { ...current };
         loadedReferences.forEach((reference) => {
           next[reference.slot] = reference;
+        });
+        return next;
+      });
+      setReferenceFileNames((current) => {
+        const next = { ...current };
+        files.forEach((file, index) => {
+          next[REFERENCE_SLOTS[index]] = file.name;
         });
         return next;
       });
@@ -684,7 +713,7 @@ export default function App() {
           outline-offset: 1px;
         }
 
-        .bulk-upload-input {
+        .bulk-upload-input, .reference-file-input {
           position: absolute;
           width: 1px;
           height: 1px;
@@ -715,18 +744,28 @@ export default function App() {
         .slot-name { color: #4d524c; font-size: 12px; font-weight: 800; }
         .slot-status { color: #8b8f88; font-size: 10px; font-weight: 750; text-transform: uppercase; }
         .is-ready .slot-status { color: #39705a; }
-        .reference-card input { width: 100%; color: #70756e; font-size: 11px; }
-        .reference-card input::file-selector-button {
-          margin-right: 7px;
-          border: 0;
+        .reference-file { display: flex; min-width: 0; flex-direction: column; gap: 9px; }
+        .reference-file-name {
+          overflow: hidden;
+          color: #70756e;
+          font-size: 11px;
+          line-height: 1.3;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .is-ready .reference-file-name { color: #344b40; font-weight: 700; }
+        .reference-file-action {
+          align-self: flex-start;
           border-radius: 7px;
           padding: 6px 8px;
           color: #304238;
           background: #e6e8e1;
           font-size: 11px;
           font-weight: 700;
-          cursor: pointer;
         }
+
+        .is-ready .reference-file-action { background: #dce9df; }
 
         .production-row {
           display: grid;
@@ -1067,7 +1106,18 @@ export default function App() {
                       <span className="slot-name">Reference {slot}</span>
                       <span className="slot-status">{references[slot] ? 'Ready' : 'Empty'}</span>
                     </span>
+                    <span className="reference-file">
+                      <span className="reference-file-name" title={referenceFileNames[slot]}>
+                        {references[slot]
+                          ? referenceFileNames[slot] ?? 'Selected image'
+                          : 'No image selected'}
+                      </span>
+                      <span className="reference-file-action">
+                        {references[slot] ? 'Replace' : 'Choose image'}
+                      </span>
+                    </span>
                     <input
+                      className="reference-file-input"
                       id={`reference-${slot}`}
                       data-slot={slot}
                       type="file"
