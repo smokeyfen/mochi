@@ -108,7 +108,7 @@ export default function App() {
     setProductDetails(event.currentTarget.value);
   }
 
-  function handleCategoryChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleCategoryChange(event: ChangeEvent<HTMLSelectElement>) {
     setCategory(event.currentTarget.value);
   }
 
@@ -1049,14 +1049,19 @@ export default function App() {
 
               <div className="field">
                 <label htmlFor="category">Category</label>
-                <input
+                <select
                   id="category"
-                  type="text"
                   value={category}
                   onChange={handleCategoryChange}
-                  placeholder="e.g. Toys"
                   required
-                />
+                >
+                  <option value="" disabled>Chọn danh mục</option>
+                  <option value="Đồ chơi và Trẻ em">Đồ chơi và Trẻ em</option>
+                  <option value="Điện tử tiêu dùng">Điện tử tiêu dùng</option>
+                  <option value="Mẹ và Bé">Mẹ và Bé</option>
+                  <option value="Trang trí nhà cửa">Trang trí nhà cửa</option>
+                  <option value="Thực phẩm và Đồ uống">Thực phẩm và Đồ uống</option>
+                </select>
               </div>
 
               <div className="field field-wide">
