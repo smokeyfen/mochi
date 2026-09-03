@@ -210,20 +210,23 @@ CUT
 - Never add more than one cut.
 
 DIALOGUE
-- Write one concise Vietnamese off-camera line per scene in a sincere KOC-review voice: it should sound like a real person looking at or handling the product right now, not reading a listing, catalog, script brief, or TV advertisement.
+- Write at least two complete Vietnamese sentences per scene in a sincere, everyday KOC-review voice. It should sound like a real person looking at or handling the product right now, not reading a listing, catalog, script brief, or TV advertisement.
+- Normally use exactly two short, natural sentences. Add another sentence only when the complete dialogue remains comfortably speakable within the 8-second scene at a natural pace.
+- Each sentence must stand on its own as a complete spoken thought. Do not use a comma, semicolon, conjunction, or two clauses inside one sentence to imitate the required two-sentence structure.
+- The sentences must complement each other and stay centered on primaryFactId rather than repeating the same claim in different words. Supporting facts are optional and should appear only when they strengthen that same primary idea without crowding the speech.
 - Keep the selected voice gender consistent; do not mention the speaker on screen.
 - The line does not need to repeat evidence word-for-word. Natural paraphrase, everyday phrasing, mild subjective reactions, and conversational particles are welcome when they stay truthful.
 - Prefer ordinary spoken Vietnamese over formal product-copy constructions. When a casual equivalent exists, avoid stiff wording such as "sản phẩm được...", "trang bị...", "tác động lực...", "thiết kế phù hợp cho...", or "rất thích hợp...".
-- Immediate first-person wording is allowed when it describes the current visible review action or observation, for example "mình cầm...", "mình nhìn...", or "mình đẩy xe rồi thả tay...". Do not fabricate ownership, long-term use, prior testing, or a child's personal reaction.
+- Immediate first-person wording such as "mình", "mình thấy", or "nhìn cái này" is allowed when it naturally describes the current visible review action, observation, or light subjective reaction. Vary sentence openings and cadence across scenes; do not force every scene into the same first-person template. Do not fabricate ownership, long-term use, prior testing, or a child's personal reaction.
+- Reasonable inference is allowed only when it is already supported by the selected E1 grounded fact. Do not extend an inference into a new specific claim.
 - For a simple physical behavior, describe what the viewer can see in everyday verbs rather than explaining a mechanism. If the grounded idea is "chạy đà", a natural line can describe pushing/releasing and the car continuing to move; do not rename that behavior as a friction motor, spring motor, pull-back motor, or other internal mechanism.
 - For physical behavior such as "chạy đà", natural spoken phrasing must stay at the grounded strength of the fact and the visible action. Unless separately grounded, do not qualify the push force, travel distance, smoothness, speed, or how long the motion continues.
 - In packaging or product-presentation scenes, speak only from grounded facts and what is visibly being presented. Packaging or a neat arrangement alone does not support extra portability, storage, convenience, travel/use-case, or ease-of-use claims.
-- Prefer one natural sentence or two short spoken clauses. Vary sentence openings and cadence across the four scenes so they do not sound templated. Use particles such as "nha", "nè", "thì", or "cũng" only when they genuinely improve spoken rhythm, not as a quota.
-- Keep the spoken idea centered on primaryFactId. Use supportingFactIds only when they fit naturally; there is no requirement to verbalize every supporting fact.
-- Do not turn natural reviewer language into a new falsifiable product claim. Stay within the meaning and strength of the selected grounded facts.
-- Never add ungrounded measurable performance such as speed, distance, duration, force, capacity, or stronger safety/compatibility guarantees.
+- Use particles such as "nha", "nè", "thì", or "cũng" only when they genuinely improve spoken rhythm, not as a quota.
+- Do not turn natural reviewer language into a new falsifiable claim. Never add specific performance, safety, mechanism, compatibility, operating information, or any detail that exceeds or contradicts the evidence.
+- Never add ungrounded measurable performance such as speed, distance, duration, force, or capacity.
 - Casual adjectives are allowed when they are clearly subjective and visual, but avoid stacking superlatives or polished ad slogans.
-- No hard word-count target; keep it comfortably speakable within an approximately 8-second scene in one natural breath.
+- Keep the complete dialogue comfortably speakable within the 8-second scene at a natural conversational pace. Never write a long dialogue and compensate by asking for fast delivery.
 
 SEQUENCE
 Build a coherent four-scene review arc. A useful default is broad orientation -> useful feature/behavior -> detail/value -> closing presentation, but follow the actual evidence instead of forcing that pattern.
