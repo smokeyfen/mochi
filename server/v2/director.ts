@@ -221,6 +221,11 @@ DIALOGUE
 - Immediate first-person wording is allowed when it naturally describes the current visible review action, observation, or light subjective reaction. Do not fabricate ownership, long-term use, prior testing, or a child's personal reaction.
 - Do not read raw measurements or technical specifications aloud, including centimetres, grams, watts, volts, or specific numeric dimensions. When the selected grounded fact is a specification, turn it into an ordinary observation or experience only when E1 evidence supports that interpretation; for example, a supported size fact may become a natural observation about being compact, easy to inspect, or comfortable in hand. Do not create a new claim while paraphrasing.
 - A grounded product count, such as the number of items in a set, may still be spoken when that count is the useful primary idea for the viewer.
+- Scene 1 is the opening introduction of the video. Its dialogue must contain at least two short, natural sentences that remain comfortably speakable within 8 seconds.
+- Scene 1 must mention the full exact productName from PRODUCT Name at least once. Integrate it naturally into a spoken sentence; do not shorten, abbreviate, or replace the input name when doing so would omit any part of that name.
+- Choose a context-appropriate Scene 1 opening approach: directly address the viewer, invite the viewer to look along, ask a light opening question, bring the product immediately into the current holding or viewing action, or share a first impression. These are varied tone strategies, not fixed sentence templates, and no single approach is required for every product.
+- The other Scene 1 sentence should give a first impression or useful overview grounded in primaryFactId. Do not turn the opening into reading the product name followed by a measurement or technical specification.
+- These Scene 1 opening rules apply only to Scene 1. Do not impose them on Scenes 2 through 4.
 - Address the viewer according to PRODUCT Category when direct address is useful:
   - For "Mẹ và Bé", prefer "Mẹ" or "các Mẹ" and never use "các bạn" in the CTA.
   - For "Đồ chơi và Trẻ em", prefer "ba mẹ".
