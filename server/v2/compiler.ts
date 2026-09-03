@@ -167,18 +167,14 @@ function identityDirection(evidence: EvidencePackageV2): string {
     `Visible form: ${evidence.product.shapeAndGeometry}`,
     `Surface appearance: ${evidence.product.materialAppearance}`,
     `Setting: ${evidence.product.environmentAnchor}.`,
-    'Use only colors, markings, packaging details, and variant traits actually visible in the routed reference(s); never merge family variants.',
+    'Use only colors, markings, packaging details, and variant traits actually visible in the production references supplied for the scene; never merge incompatible visible variants.',
   ].join('\n');
 }
 
-function referenceDirection(scene: ScenePlanV2): string {
-  const supports = scene.supportingReferenceIds.length
-    ? `; supporting ${scene.supportingReferenceIds.join(', ')}`
-    : '';
-
+function referenceDirection(): string {
   return [
-    `Primary ${scene.primaryReferenceId}${supports}.`,
-    'Match routed references for visible identity and proportions. Ignore source-image overlays/UI/watermarks. Do not invent parts, labels, accessories, packaging features, or mechanisms.',
+    'Use the production references supplied for this scene to preserve product identity, proportions, and visible traits.',
+    'Ignore source-image overlays, UI, and watermarks. Do not invent parts, labels, accessories, packaging features, or mechanisms.',
   ].join('\n');
 }
 
@@ -198,7 +194,7 @@ function compileScene(
     '',
     'PRODUCT / REFERENCES',
     identityDirection(evidence),
-    referenceDirection(scene),
+    referenceDirection(),
     '',
     'SCENE',
     `${scene.sceneNumber}. ${scene.mode}. ${scene.focus}.`,
