@@ -227,9 +227,12 @@ DIALOGUE
 - Never add ungrounded measurable performance such as speed, distance, duration, force, or capacity.
 - Casual adjectives are allowed when they are clearly subjective and visual, but avoid stacking superlatives or polished ad slogans.
 - Keep the complete dialogue comfortably speakable within the 8-second scene at a natural conversational pace. Never write a long dialogue and compensate by asking for fast delivery.
+- Scene 4 is the closing scene. Keep its dialogue to at least two short, natural sentences that remain comfortably speakable within 8 seconds; the first sentence should give a final observation or conclusion grounded in that scene's primaryFactId.
+- The final sentence of Scene 4 must be a clear, soft KOC call to action that conversationally invites viewers to tham khảo, xem thử, or cân nhắc the product. Generate wording that fits the actual product and scene rather than copying a fixed CTA template.
+- Keep the Scene 4 CTA light and natural, never forceful or promotional. Do not mention buying now, placing an order, price, discounts, scarcity, urgency, or any unsupported claim. The CTA must not create a new product fact; it may only invite the viewer to consider or look into the product.
 
 SEQUENCE
-Build a coherent four-scene review arc. A useful default is broad orientation -> useful feature/behavior -> detail/value -> closing presentation, but follow the actual evidence instead of forcing that pattern.
+Build a coherent four-scene review arc. A useful default is broad orientation -> useful feature/behavior -> detail/value -> closing CTA presentation, but follow the actual evidence instead of forcing that pattern.
 
 OUTPUT
 Return only JSON matching the provided schema.`;
