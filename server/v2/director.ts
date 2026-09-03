@@ -210,14 +210,24 @@ CUT
 - Never add more than one cut.
 
 DIALOGUE
-- Write at least two complete Vietnamese sentences per scene in a sincere, everyday KOC-review voice. It should sound like a real person looking at or handling the product right now, not reading a listing, catalog, script brief, or TV advertisement.
+- Write at least two complete Vietnamese sentences per scene in a sincere, everyday KOC-review voice. It must sound like a real person directly holding, looking at, or trying the product while talking to the viewer, not introducing a listing, catalog, script brief, or TV advertisement.
 - Normally use exactly two short, natural sentences. Add another sentence only when the complete dialogue remains comfortably speakable within the 8-second scene at a natural pace.
 - Each sentence must stand on its own as a complete spoken thought. Do not use a comma, semicolon, conjunction, or two clauses inside one sentence to imitate the required two-sentence structure.
 - The sentences must complement each other and stay centered on primaryFactId rather than repeating the same claim in different words. Supporting facts are optional and should appear only when they strengthen that same primary idea without crowding the speech.
 - Keep the selected voice gender consistent; do not mention the speaker on screen.
 - The line does not need to repeat evidence word-for-word. Natural paraphrase, everyday phrasing, mild subjective reactions, and conversational particles are welcome when they stay truthful.
-- Prefer ordinary spoken Vietnamese over formal product-copy constructions. When a casual equivalent exists, avoid stiff wording such as "sản phẩm được...", "trang bị...", "tác động lực...", "thiết kế phù hợp cho...", or "rất thích hợp...".
-- Immediate first-person wording such as "mình", "mình thấy", or "nhìn cái này" is allowed when it naturally describes the current visible review action, observation, or light subjective reaction. Vary sentence openings and cadence across scenes; do not force every scene into the same first-person template. Do not fabricate ownership, long-term use, prior testing, or a child's personal reaction.
+- Prefer interactive spoken Vietnamese with natural cues in the spirit of "mình thấy", "nhìn chỗ này", "Mẹ nhìn này", "mình thử", "cái này", or "đoạn này" when they fit the scene. These are tone cues, not fixed sentence templates. Vary sentence openings and cadence; do not force every scene to begin the same way.
+- Do not use listing-style introductions or technical recitation such as "hôm nay mình giới thiệu", "sản phẩm có", "chiều dài là", "kích thước là", "được làm từ", or "sử dụng cơ chế". When a casual equivalent exists, also avoid stiff wording such as "sản phẩm được...", "trang bị...", "tác động lực...", "thiết kế phù hợp cho...", or "rất thích hợp...".
+- Immediate first-person wording is allowed when it naturally describes the current visible review action, observation, or light subjective reaction. Do not fabricate ownership, long-term use, prior testing, or a child's personal reaction.
+- Do not read raw measurements or technical specifications aloud, including centimetres, grams, watts, volts, or specific numeric dimensions. When the selected grounded fact is a specification, turn it into an ordinary observation or experience only when E1 evidence supports that interpretation; for example, a supported size fact may become a natural observation about being compact, easy to inspect, or comfortable in hand. Do not create a new claim while paraphrasing.
+- A grounded product count, such as the number of items in a set, may still be spoken when that count is the useful primary idea for the viewer.
+- Address the viewer according to PRODUCT Category when direct address is useful:
+  - For "Mẹ và Bé", prefer "Mẹ" or "các Mẹ" and never use "các bạn" in the CTA.
+  - For "Đồ chơi và Trẻ em", prefer "ba mẹ".
+  - For "Điện tử tiêu dùng", prefer "mọi người".
+  - For "Trang trí nhà cửa", prefer "mọi người" or "cả nhà" when natural.
+  - For "Thực phẩm và Đồ uống", prefer "mọi người" or "cả nhà" when natural.
+- Do not mention an audience persona in every sentence. Use it only when directly speaking to the viewer or when the Scene 4 CTA benefits from it.
 - Reasonable inference is allowed only when it is already supported by the selected E1 grounded fact. Do not extend an inference into a new specific claim.
 - For a simple physical behavior, describe what the viewer can see in everyday verbs rather than explaining a mechanism. If the grounded idea is "chạy đà", a natural line can describe pushing/releasing and the car continuing to move; do not rename that behavior as a friction motor, spring motor, pull-back motor, or other internal mechanism.
 - For physical behavior such as "chạy đà", natural spoken phrasing must stay at the grounded strength of the fact and the visible action. Unless separately grounded, do not qualify the push force, travel distance, smoothness, speed, or how long the motion continues.
@@ -228,7 +238,7 @@ DIALOGUE
 - Casual adjectives are allowed when they are clearly subjective and visual, but avoid stacking superlatives or polished ad slogans.
 - Keep the complete dialogue comfortably speakable within the 8-second scene at a natural conversational pace. Never write a long dialogue and compensate by asking for fast delivery.
 - Scene 4 is the closing scene. Keep its dialogue to at least two short, natural sentences that remain comfortably speakable within 8 seconds; the first sentence should give a final observation or conclusion grounded in that scene's primaryFactId.
-- The final sentence of Scene 4 must be a clear, soft KOC call to action that conversationally invites viewers to tham khảo, xem thử, or cân nhắc the product. Generate wording that fits the actual product and scene rather than copying a fixed CTA template.
+- The final sentence of Scene 4 must be a clear, soft KOC call to action that conversationally invites viewers to tham khảo, xem thử, or cân nhắc the product. Use the audience persona mapped from PRODUCT Category; for "Mẹ và Bé", address "Mẹ" or "các Mẹ" naturally. Generate wording that fits the actual product and scene rather than copying a fixed CTA template.
 - Keep the Scene 4 CTA light and natural, never forceful or promotional. Do not mention buying now, placing an order, price, discounts, scarcity, urgency, or any unsupported claim. The CTA must not create a new product fact; it may only invite the viewer to consider or look into the product.
 
 SEQUENCE
