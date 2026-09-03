@@ -36,13 +36,13 @@ const ACTION_DIRECTIONS: Record<SceneAction, string> = {
 
 const CAMERA_DIRECTIONS: Record<CameraIntent, string> = {
   OVERVIEW_REVEAL:
-    'Slightly elevated medium-wide three-quarter view that clearly establishes the whole product/set; restrained slow push or natural recentering, no orbit.',
+    'Use a medium-wide or wide view that clearly shows the entire product or set. A slightly elevated or front-diagonal viewpoint is appropriate, with a slow reveal or gentle push. Do not turn this into a close product shot or sacrifice action readability for visual variety.',
   ACTION_READABILITY:
-    'Side or three-quarter medium-close view aligned to the action; keep hands, release point, product, and immediate motion path unobstructed; camera mostly stable.',
+    'Use a product-level side view or near side profile aligned to the action. Keep the hands, release point, product, and full motion path unobstructed, with the camera mostly stable. Do not use a decorative orbit or dramatic angle.',
   DETAIL_INSPECTION:
-    'Close three-quarter detail view with natural perspective; only a short slow lateral drift or micro push.',
+    'Use close detail framing from the viewpoint that makes the specific detail easiest to inspect. A low oblique or other detail-specific angle is appropriate, with only a small micro movement. Do not default to a three-quarter view when another angle reads the detail better, and never make the action harder to read for the sake of difference.',
   PRODUCT_PRESENTATION:
-    'Clean product-level or slight three-quarter hero view; restrained slow push/pull with small natural handheld imperfections.',
+    'Use a clean product-level frontal view or shallow hero angle, with a restrained slow push/pull or very light natural handheld movement. Do not repeat the elevated overview viewpoint or default to the same three-quarter angle as another scene. Preserve action readability whenever the product is being handled.',
 };
 
 const CUT_DIRECTIONS: Record<CutPreference, string> = {
