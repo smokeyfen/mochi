@@ -17,21 +17,21 @@ const ACTION_DIRECTIONS: Record<SceneAction, string> = {
   PRESENT:
     'Hands present the product steadily and keep it dominant in frame. This is staging only, not proof of an invisible claim.',
   MOVE:
-    'Hands move the whole product once in a controlled readable way, then settle it. Treat the motion as staging unless this is a grounded demonstration.',
+    'Hands move the whole product in a controlled readable way, then settle it. Treat the motion as staging unless this is a grounded demonstration.',
   REORIENT:
-    'Hands turn or reposition the whole product once for inspection; no second major action.',
+    'Hands turn or reposition the whole product clearly for inspection.',
   PRESS_RELEASE:
-    'Perform one simple whole-product manual actuation, fully release, then let the product move afterward. Do not depict or name any hidden motor, spring, or internal mechanism.',
+    'Perform a simple whole-product manual actuation, fully release, then let the product move afterward. Do not depict or name any hidden motor, spring, or internal mechanism.',
   OPEN:
-    'Open the grounded product or packaging relationship once in one clear physically plausible motion.',
+    'Open the grounded product or packaging relationship in a clear physically plausible motion.',
   CLOSE:
-    'Close the grounded product or packaging relationship once in one clear physically plausible motion.',
+    'Close the grounded product or packaging relationship in a clear physically plausible motion.',
   CONNECT:
-    'Connect the grounded parts once; do not invent adapters, parts, or mechanisms.',
+    'Connect the grounded parts clearly; do not invent adapters, parts, or mechanisms.',
   DISCONNECT:
-    'Disconnect the grounded parts once; do not invent extra parts or mechanisms.',
+    'Disconnect the grounded parts clearly; do not invent extra parts or mechanisms.',
   REMOVE:
-    'Remove the grounded part or item once; do not add another major action.',
+    'Remove the grounded part or item clearly.',
 };
 
 const CAMERA_DIRECTIONS: Record<CameraIntent, string> = {
@@ -184,8 +184,8 @@ function referenceDirection(scene: ScenePlanV2): string {
 
 function modeDirection(scene: ScenePlanV2): string {
   return scene.mode === 'DEMONSTRATION'
-    ? 'Demonstrate only the grounded behavior with clear cause-and-effect; do not strengthen performance or add another major action.'
-    : 'Treat handling as visual presentation only; it must not imply proof of invisible properties, specifications, safety, or hidden behavior.';
+    ? 'Demonstrate only the grounded behavior with clear cause-and-effect; supporting movement must remain physically plausible, evidence-compatible, and secondary to that readable causal action.'
+    : 'Treat handling as visual presentation only; natural supporting handling may aid observation, but it must not imply proof of invisible properties, specifications, safety, or hidden behavior.';
 }
 
 function compileScene(
@@ -206,7 +206,8 @@ function compileScene(
     modeDirection(scene),
     '',
     'ACTION',
-    `${scene.action}: ${ACTION_DIRECTIONS[scene.action]}`,
+    `${scene.action} is the primary action: ${ACTION_DIRECTIONS[scene.action]}`,
+    'Simple natural supporting movements are optional when they directly support the primary action and fit the grounded product. Never create a complex or unsupported action sequence.',
     '',
     'CAMERA / EDIT',
     `${scene.cameraIntent}: ${CAMERA_DIRECTIONS[scene.cameraIntent]}`,

@@ -172,19 +172,22 @@ SCENE SELECTION
 - Do not use LOW-confidence facts as the primary fact when a stronger grounded alternative exists.
 
 PRESENTATION VS DEMONSTRATION
-- PRESENTATION means the scene shows the product while discussing a grounded fact. It must not imply that a staging gesture proves an invisible property.
-- DEMONSTRATION is allowed only when the primary fact is marked DEMONSTRATABLE by E1 and one simple physical action can truthfully show that behavior.
+- PRESENTATION means the scene shows the product while discussing a grounded fact. Natural evidence-compatible handling may support direct observation, but it must not imply that a staging gesture proves an invisible property.
+- DEMONSTRATION is allowed only when the primary fact is marked DEMONSTRATABLE by E1 and a clear evidence-supported physical action can truthfully show that behavior. Preserve an easy-to-read cause-and-effect relationship.
 - Never convert a PRESENTATIONAL fact into a demonstration merely because the object can be touched or moved.
 - A DEMONSTRATABLE fact may still be used in a PRESENTATION scene when that creates a better four-scene sequence.
 
 ACTION
-Choose exactly one major physical action per scene from: ${SCENE_ACTIONS.join(', ')}.
+Choose exactly one primary physical action per scene from: ${SCENE_ACTIONS.join(', ')}. Store that primary action in the existing action field.
 - PRESENT: simply reveal or hold/show the product.
 - MOVE: externally controlled translation of the whole product; in PRESENTATION this is staging, not proof of a hidden claim.
 - REORIENT: rotate/turn/reposition the whole product for inspection; in PRESENTATION this is staging.
 - PRESS_RELEASE: one simple whole-product actuation followed by full release, then the product moves afterward. Use only when the grounded fact supports that behavior; never invent a motor/spring/mechanism.
 - OPEN, CLOSE, CONNECT, DISCONNECT, REMOVE: use only when the grounded fact explicitly supports that physical relationship or behavior.
-- ACTION_READABILITY outranks decorative motion. Do not stack multiple major actions into one scene.
+- Simple natural supporting movements or handling are allowed only when they directly support the primary action, fit the product's physical reality, and remain consistent with evidence.
+- Do not require supporting movement. The primary action alone is correct when it is the clearest presentation.
+- Do not create a complex, hard-to-read, or unsupported chain of actions. In DEMONSTRATION, every supporting movement must preserve clear cause and effect; in PRESENTATION, it may only support natural product observation.
+- ACTION_READABILITY outranks decorative motion.
 
 REFERENCE ROUTING
 - primaryReferenceId must be one of the primary fact's supportingReferenceIds or compatibleReferenceIds.
