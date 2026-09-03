@@ -174,6 +174,55 @@ export default function App() {
     }
   }
 
+  async function handleBulkReferenceChange(event: ChangeEvent<HTMLInputElement>) {
+    const inputElement = event.currentTarget;
+    const files = Array.from(inputElement.files ?? []);
+
+    if (files.length === 0) return;
+
+    if (files.length > REFERENCE_SLOTS.length) {
+      inputElement.value = '';
+      setError('Upload up to 5 images at once. Existing references were not changed.');
+      return;
+    }
+
+    if (files.some((file) => !file.type.startsWith('image/'))) {
+      inputElement.value = '';
+      setError('Bulk upload accepts image files only. Existing references were not changed.');
+      return;
+    }
+
+    setError('');
+    setPendingFileReads((count) => count + files.length);
+
+    try {
+      const loadedReferences = await Promise.all(
+        files.map(async (file, index): Promise<EvidenceReferenceInputV2> => ({
+          slot: REFERENCE_SLOTS[index],
+          mimeType: file.type,
+          dataBase64: await fileToBase64(file),
+        })),
+      );
+
+      setReferences((current) => {
+        const next = { ...current };
+        loadedReferences.forEach((reference) => {
+          next[reference.slot] = reference;
+        });
+        return next;
+      });
+    } catch (readError) {
+      setError(
+        readError instanceof Error
+          ? `${readError.message} Existing references were not changed.`
+          : 'Could not read the selected images. Existing references were not changed.',
+      );
+    } finally {
+      inputElement.value = '';
+      setPendingFileReads((count) => Math.max(0, count - files.length));
+    }
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!canSubmit) return;
@@ -611,7 +660,40 @@ export default function App() {
         }
 
         .reference-heading legend { padding: 0; font-size: 14px; font-weight: 800; }
+        .reference-tools { display: flex; align-items: center; gap: 12px; }
         .reference-count { margin: 0; color: #71776f; font-size: 12px; }
+        .bulk-upload-control {
+          position: relative;
+          display: inline-flex;
+          align-items: center;
+          min-height: 34px;
+          border: 1px solid #c9cdc5;
+          border-radius: 9px;
+          padding: 0 11px;
+          color: #344b40;
+          background: #eef2ec;
+          font-size: 11px;
+          font-weight: 800;
+          cursor: pointer;
+          transition: border-color 140ms ease, background 140ms ease;
+        }
+
+        .bulk-upload-control:hover { border-color: #91a99b; background: #e5eee8; }
+        .bulk-upload-control:focus-within {
+          outline: 3px solid rgba(66, 108, 92, 0.14);
+          outline-offset: 1px;
+        }
+
+        .bulk-upload-input {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+          clip-path: inset(50%);
+          white-space: nowrap;
+        }
+
         .reference-grid {
           display: grid;
           grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -862,6 +944,7 @@ export default function App() {
           .panel-header, .form-body { padding-left: 18px; padding-right: 18px; }
           .reference-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
           .reference-heading { align-items: flex-start; flex-direction: column; gap: 5px; }
+          .reference-tools { align-items: flex-start; flex-direction: column; gap: 7px; }
           .run-card, .handoff { grid-template-columns: 1fr; align-items: stretch; }
           .run-card { flex-direction: column; align-items: stretch; }
           .primary-button, .copy-master { width: 100%; }
@@ -954,11 +1037,24 @@ export default function App() {
             <fieldset className="reference-block">
               <div className="reference-heading">
                 <legend>02 · Reference images</legend>
-                <p className="reference-count" aria-live="polite">
-                  {pendingFileReads > 0
-                    ? `Reading ${pendingFileReads} image file(s)…`
-                    : `${selectedReferences.length} of 5 slots ready`}
-                </p>
+                <div className="reference-tools">
+                  <label className="bulk-upload-control" htmlFor="reference-bulk">
+                    Upload multiple images
+                    <input
+                      className="bulk-upload-input"
+                      id="reference-bulk"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleBulkReferenceChange}
+                    />
+                  </label>
+                  <p className="reference-count" aria-live="polite">
+                    {pendingFileReads > 0
+                      ? `Reading ${pendingFileReads} image file(s)…`
+                      : `${selectedReferences.length} of 5 slots ready`}
+                  </p>
+                </div>
               </div>
               <div className="reference-grid">
                 {REFERENCE_SLOTS.map((slot) => (
